@@ -9,7 +9,7 @@
 import UIKit
 
 class DrawView: UIView {
-
+    
     var lines: [Line] = []
     var lastPoint: CGPoint!
     var drawColor = UIColor.blackColor()
@@ -19,14 +19,19 @@ class DrawView: UIView {
         super.init(coder: aDecoder)
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        lastPoint = touches.anyObject()?.locationInView(self)
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        if let touch = touches.first as? UITouch {
+            lastPoint = touch.locationInView(self)
+        }
+        super.touchesBegan(touches , withEvent:event)
     }
     
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
-        var newPoint = touches.anyObject()?.locationInView(self)
-        lines.append(Line(start: lastPoint, end: newPoint!, color: drawColor))
-        lastPoint = newPoint
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        if let touch = touches.first as? UITouch {
+            var newPoint = touch.locationInView(self)
+            lines.append(Line(start: lastPoint, end: newPoint, color: drawColor, lineWidth: lineWidth))
+            lastPoint = newPoint
+        }
         
         self.setNeedsDisplay()
     }
@@ -43,5 +48,5 @@ class DrawView: UIView {
             CGContextStrokePath(context)
         }
     }
-
+    
 }
